@@ -13,7 +13,16 @@ class nslcd::params {
   $template = 'nslcd/nslcd.conf.erb'
   $source_dir = undef
   $source_dir_purge = undef
-  
+
+  $ldap_uri = 'ldap://127.0.0.1/'
+  $ldap_base = 'dc=localdomain'
+  $ldap_version = '3'
+  $ldap_binddn = undef
+  $ldap_bindpw = undef
+  $ldap_ssl = undef
+  $ldap_tls_reqcert = undef
+  $ldap_scope = undef
+
   # This mandates which distributions are supported
   # To add support for other distributions simply add
   # a matching regex line to the lsbdistcodename fact

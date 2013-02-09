@@ -1,6 +1,21 @@
 ## MANAGED BY PUPPET
 
-<%- parameters.sort_by { |k,v| k }.each do |k,v| -%>
+<%- boolean_mapper { true => 'on', false => 'off' } -%>
+
+# Defaults
+# These are mandated via init script so makes no
+# sense to change them
+uid <%= scope.lookupvar('nslcd::params::user') %>
+gid <%= scope.lookupvar('nslcd::params::group') %>
+
+# Configurable parameters
+<%- parameters.sort_by { |k,v| k }.each do |k,v|
+  if v != :undef
+    if boolean_mapper.has_key?(v) -%>
+<%= k %> <%= boolean_mapper[v] %>
+    <%- else -%>
 <%= k %> <%= v %>
+    <%- end -%>
+  <%- end -%>
 <%- end -%>
 

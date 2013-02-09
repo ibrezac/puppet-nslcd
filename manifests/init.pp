@@ -71,14 +71,36 @@ class nslcd (  $ensure = $nslcd::params::ensure,
                $autorestart = $nslcd::params::autorestart,
                $source = $nslcd::params::source,
                $template = $nslcd::params::template,
+               $ldap_uri = $nslcd::params::ldap_uri,
+               $ldap_base = $nslcd::params::ldap_base,
+               $ldap_version = $nslcd::params::ldap_version,
+               $ldap_binddn = $nslcd::params::ldap_binddn,
+               $ldap_bindpw = $nslcd::params::ldap_bindpw,
+               $ldap_ssl = $nslcd::params::ldap_ssl,
+               $ldap_tls_reqcert = $nslcd::params::ldap_tls_reqcert,
+               $ldap_scope = $nslcd::params::ldap_scope,
                $parameters = {} ) inherits nslcd::params {
 
   # Input validation
   validate_re($ensure,[ 'present', 'absent', 'purge' ])
   validate_re($service_status, [ 'running', 'stopped', 'unmanaged' ])
+  validate_re($ldap_version, [ '2', '3' ])
   validate_bool($autoupgrade)
   validate_bool($autorestart)
+  validate_bool($ldap_ssl)
   validate_hash($parameters)
+
+  # Insert class parameters into hash
+  # This simplifies the erb template and makes
+  # it less verbose
+  $parameters['uri'] = $ldap_uri
+  $parameters['base'] = $ldap_base
+  $parameters['ldap_version'] = $ldap_version
+  $parameters['binddn'] = $ldap_binddn
+  $parameters['bindpw'] = $ldap_bindpw
+  $parameters['ssl'] = $ldap_ssl
+  $parameters['tls_reqcert'] = $ldap_tls_reqcert
+  $parameters['scope'] = $ldap_scope
 
   # 'unmanaged' is an unknown service state
   $service_status_real = $service_status ? {
