@@ -1,8 +1,8 @@
-# == Class: TEMPLATE::params
+# == Class: nslcd::params
 #
 # This class is only used to set variables
 #
-class TEMPLATE::params {
+class nslcd::params {
 
   $ensure = present
   $service_enable = true
@@ -10,18 +10,22 @@ class TEMPLATE::params {
   $autoupgrade = false
   $autorestart = true
   $source = undef
-  $template = 'TEMPLATE/TEMPLATE.conf.erb'
+  $template = 'nslcd/nslcd.conf.erb'
   $source_dir = undef
   $source_dir_purge = undef
   
   # This mandates which distributions are supported
   # To add support for other distributions simply add
-  # a matching regex line to the operatingsystem fact
+  # a matching regex line to the lsbdistcodename fact
   case $::lsbdistcodename {
     lucid: {
-      $package = 'TEMPLATE'
-      $service = 'TEMPLATE'
-      $config_file = '/etc/TEMPLATE.conf'
+      $user = 'nslcd'
+      $group = 'nslcd'
+      $package = 'nslcd'
+      $service = 'nslcd'
+      $config_file = '/etc/nslcd.conf'
+      $config_file_mode = '0640'
+      $run_dir = '/var/run/nslcd'
     }
     default: {
       fail("Unsupported distribution ${::lsbdistcodename}")

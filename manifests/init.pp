@@ -1,6 +1,6 @@
-# == Class: TEMPLATE
+# == Class: nslcd
 #
-# This module manages the TEMPLATE server. More descriptions here
+# This module manages the nslcd server. More descriptions here
 #
 # === Parameters
 #
@@ -33,19 +33,19 @@
 #   Valid values: <tt>mymodule/path/to/file.conf.erb</tt>
 #
 # [*parameters*]
-#   Hash variable to pass to TEMPLATE
+#   Hash variable to pass to nslcd
 #   Valid values: hash, ex:  <tt>{ 'option' => 'value' }</tt>
 #
 # === Sample Usage
 #
 # * Installing with default settings
-#   class { 'TEMPLATE': }
+#   class { 'nslcd': }
 #
 # * Uninstalling the software
-#   class { 'TEMPLATE': ensure => absent }
+#   class { 'nslcd': ensure => absent }
 #
 # * Installing, with service disabled on boot and using custom passwd settings
-#   class { 'TEMPLATE:
+#   class { 'nslcd:
 #     service_enable    => false,
 #     parameters_passwd => {
 #       'enable-cache'  => 'no'
@@ -62,16 +62,16 @@
 #
 # === Author
 #
-# Firstname Lastname <firstname.lastname@artificial-solutions.com>
+# Johan Lyheden <johan.lyheden@artificial-solutions.com>
 #
-class TEMPLATE (  $ensure = $TEMPLATE::params::ensure,
-                  $service_enable = $TEMPLATE::params::service_enable,
-                  $service_status = $TEMPLATE::params::service_status,
-                  $autoupgrade = $TEMPLATE::params::autoupgrade,
-                  $autorestart = $TEMPLATE::params::autorestart,
-                  $source = $TEMPLATE::params::source,
-                  $template = $TEMPLATE::params::template,
-                  $parameters = {} ) inherits TEMPLATE::params {
+class nslcd (  $ensure = $nslcd::params::ensure,
+               $service_enable = $nslcd::params::service_enable,
+               $service_status = $nslcd::params::service_status,
+               $autoupgrade = $nslcd::params::autoupgrade,
+               $autorestart = $nslcd::params::autorestart,
+               $source = $nslcd::params::source,
+               $template = $nslcd::params::template,
+               $parameters = {} ) inherits nslcd::params {
 
   # Input validation
   validate_re($ensure,[ 'present', 'absent', 'purge' ])
@@ -98,40 +98,46 @@ class TEMPLATE (  $ensure = $TEMPLATE::params::ensure,
     # If software should be installed
     present: {
       if $autoupgrade == true {
-        Package['TEMPLATE'] { ensure => latest }
+        Package['nslcd'] { ensure => latest }
       } else {
-        Package['TEMPLATE'] { ensure => present }
+        Package['nslcd'] { ensure => present }
       }
       if $autorestart == true {
-        Service['TEMPLATE/service'] { subscribe => File['TEMPLATE/config'] }
+        Service['nslcd/service'] { subscribe => File['nslcd/config'] }
       }
       if $source == undef {
-        File['TEMPLATE/config'] { content => template($TEMPLATE) }
+        File['nslcd/config'] { content => template($nslcd) }
       } else {
-        File['TEMPLATE/config'] { source => $source }
+        File['nslcd/config'] { source => $source }
       }
       File {
-        owner   => root,
-        group   => root,
-        mode    => '0644',
-        require => Package['TEMPLATE'],
-        before  => Service['TEMPLATE/service']
+        require => Package['nslcd'],
+        before  => Service['nslcd/service']
       }
-      service { 'TEMPLATE/service':
+      service { 'nslcd/service':
         ensure  => $service_status_real,
-        name    => $TEMPLATE::params::service,
+        name    => $nslcd::params::service,
         enable  => $service_enable,
-        require => [ Package['TEMPLATE'], File['TEMPLATE/config' ] ]
+        require => [ Package['nslcd'], File['nslcd/config' ] ]
       }
-      file { 'TEMPLATE/config':
+      file { 'nslcd/config':
         ensure  => present,
-        path    => $TEMPLATE::params::config_file,
+        owner   => root,
+        group   => $nslcd::params::group,
+        mode    => $nslcd::params::config_file_mode,
+        path    => $nslcd::params::config_file,
+      }
+      file { 'nslcd/rundir':
+        ensure  => directory,
+        owner   => $nslcd::params::user,
+        group   => $nslcd::params::group,
+        mode    => '0755'
       }
     }
     
     # If software should be uninstalled
     absent,purge: {
-      Package['TEMPLATE'] { ensure => $ensure }
+      Package['nslcd'] { ensure => $ensure }
     }
     
     # Catch all, should not end up here due to input validation
@@ -140,8 +146,8 @@ class TEMPLATE (  $ensure = $TEMPLATE::params::ensure,
     }
   }
   
-  package { 'TEMPLATE':
-    name    => $TEMPLATE::params::package
+  package { 'nslcd':
+    name    => $nslcd::params::package
   }
 
 }
