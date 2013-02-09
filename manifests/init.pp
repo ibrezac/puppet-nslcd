@@ -106,7 +106,7 @@ class nslcd (  $ensure = $nslcd::params::ensure,
         Service['nslcd/service'] { subscribe => File['nslcd/config'] }
       }
       if $source == undef {
-        File['nslcd/config'] { content => template($nslcd) }
+        File['nslcd/config'] { content => template($template) }
       } else {
         File['nslcd/config'] { source => $source }
       }
@@ -131,6 +131,7 @@ class nslcd (  $ensure = $nslcd::params::ensure,
         ensure  => directory,
         owner   => $nslcd::params::user,
         group   => $nslcd::params::group,
+        path    => $nslcd::params::run_dir,
         mode    => '0755'
       }
     }
