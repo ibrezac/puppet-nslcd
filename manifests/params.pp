@@ -19,7 +19,7 @@ class nslcd::params {
   $ldap_version = '3'
   $ldap_binddn = undef
   $ldap_bindpw = undef
-  $ldap_ssl = undef
+  $ldap_ssl = false
   $ldap_tls_reqcert = undef
   $ldap_scope = undef
 
