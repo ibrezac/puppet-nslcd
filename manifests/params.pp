@@ -1,8 +1,8 @@
-# == Class: template::params
+# == Class: TEMPLATE::params
 #
 # This class is only used to set variables
 #
-class template::params {
+class TEMPLATE::params {
 
   $ensure = present
   $service_enable = true
@@ -10,7 +10,7 @@ class template::params {
   $autoupgrade = false
   $autorestart = true
   $source = undef
-  $template = 'template/template.conf.erb'
+  $template = 'TEMPLATE/TEMPLATE.conf.erb'
   $source_dir = undef
   $source_dir_purge = undef
   
@@ -19,9 +19,9 @@ class template::params {
   # a matching regex line to the operatingsystem fact
   case $::lsbdistcodename {
     lucid: {
-      $package = 'template'
-      $service = 'template'
-      $config_file = '/etc/template.conf'
+      $package = 'TEMPLATE'
+      $service = 'TEMPLATE'
+      $config_file = '/etc/TEMPLATE.conf'
     }
     default: {
       fail("Unsupported distribution ${::lsbdistcodename}")

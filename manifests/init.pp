@@ -1,6 +1,6 @@
-# == Class: template
+# == Class: TEMPLATE
 #
-# This module manages the template server. More descriptions here
+# This module manages the TEMPLATE server. More descriptions here
 #
 # === Parameters
 #
@@ -33,19 +33,19 @@
 #   Valid values: <tt>mymodule/path/to/file.conf.erb</tt>
 #
 # [*parameters*]
-#   Hash variable to pass to template
+#   Hash variable to pass to TEMPLATE
 #   Valid values: hash, ex:  <tt>{ 'option' => 'value' }</tt>
 #
 # === Sample Usage
 #
 # * Installing with default settings
-#   class { 'template': }
+#   class { 'TEMPLATE': }
 #
 # * Uninstalling the software
-#   class { 'template': ensure => absent }
+#   class { 'TEMPLATE': ensure => absent }
 #
 # * Installing, with service disabled on boot and using custom passwd settings
-#   class { 'template:
+#   class { 'TEMPLATE:
 #     service_enable    => false,
 #     parameters_passwd => {
 #       'enable-cache'  => 'no'
@@ -64,14 +64,14 @@
 #
 # Firstname Lastname <firstname.lastname@artificial-solutions.com>
 #
-class template (  $ensure = $template::params::ensure,
-                  $service_enable = $template::params::service_enable,
-                  $service_status = $template::params::service_status,
-                  $autoupgrade = $template::params::autoupgrade,
-                  $autorestart = $template::params::autorestart,
-                  $source = $template::params::source,
-                  $template = $template::params::template,
-                  $parameters = {} ) inherits template::params {
+class TEMPLATE (  $ensure = $TEMPLATE::params::ensure,
+                  $service_enable = $TEMPLATE::params::service_enable,
+                  $service_status = $TEMPLATE::params::service_status,
+                  $autoupgrade = $TEMPLATE::params::autoupgrade,
+                  $autorestart = $TEMPLATE::params::autorestart,
+                  $source = $TEMPLATE::params::source,
+                  $template = $TEMPLATE::params::template,
+                  $parameters = {} ) inherits TEMPLATE::params {
 
   # Input validation
   validate_re($ensure,[ 'present', 'absent', 'purge' ])
@@ -98,40 +98,40 @@ class template (  $ensure = $template::params::ensure,
     # If software should be installed
     present: {
       if $autoupgrade == true {
-        Package['template'] { ensure => latest }
+        Package['TEMPLATE'] { ensure => latest }
       } else {
-        Package['template'] { ensure => present }
+        Package['TEMPLATE'] { ensure => present }
       }
       if $autorestart == true {
-        Service['template/service'] { subscribe => File['template/config'] }
+        Service['TEMPLATE/service'] { subscribe => File['TEMPLATE/config'] }
       }
       if $source == undef {
-        File['template/config'] { content => template($template) }
+        File['TEMPLATE/config'] { content => template($TEMPLATE) }
       } else {
-        File['template/config'] { source => $source }
+        File['TEMPLATE/config'] { source => $source }
       }
       File {
         owner   => root,
         group   => root,
         mode    => '0644',
-        require => Package['template'],
-        before  => Service['template/service']
+        require => Package['TEMPLATE'],
+        before  => Service['TEMPLATE/service']
       }
-      service { 'template/service':
+      service { 'TEMPLATE/service':
         ensure  => $service_status_real,
-        name    => $template::params::service,
+        name    => $TEMPLATE::params::service,
         enable  => $service_enable,
-        require => [ Package['template'], File['template/config' ] ]
+        require => [ Package['TEMPLATE'], File['TEMPLATE/config' ] ]
       }
-      file { 'template/config':
+      file { 'TEMPLATE/config':
         ensure  => present,
-        path    => $template::params::config_file,
+        path    => $TEMPLATE::params::config_file,
       }
     }
     
     # If software should be uninstalled
     absent,purge: {
-      Package['template'] { ensure => $ensure }
+      Package['TEMPLATE'] { ensure => $ensure }
     }
     
     # Catch all, should not end up here due to input validation
@@ -140,8 +140,8 @@ class template (  $ensure = $template::params::ensure,
     }
   }
   
-  package { 'template':
-    name    => $template::params::package
+  package { 'TEMPLATE':
+    name    => $TEMPLATE::params::package
   }
 
 }
