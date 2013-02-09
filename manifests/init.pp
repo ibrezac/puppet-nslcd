@@ -32,6 +32,38 @@
 #   Path to ERB puppet template file to use
 #   Valid values: <tt>mymodule/path/to/file.conf.erb</tt>
 #
+# [*ldap_uri*]
+#   LDAP uri to query, multiple servers can be white space separated
+#   Valid values: <tt>ldap://127.0.0.1/</tt>
+#
+# [*ldap_base*]
+#   LDAP search base
+#   Valid values: <tt>dc=localdomain</tt>
+#
+# [*ldap_version*]
+#   LDAP version number
+#   Valid values: <tt>2</tt>, <tt>3</tt>
+#
+# [*ldap_binddn*]
+#   If LDAP server requires a binddn, provide here
+#   Valid values: <tt>cn=lookupuser,dc=localdomain</tt>
+#
+# [*ldap_bindpw*]
+#   If LDAP server requires a binddn, provide password to dn here
+#   Valid values: <tt>password</tt>
+#
+# [*ldap_ssl*]
+#   If SSL encrypted LDAP should be used
+#   Valid values: <tt>true</tt>, <tt>false</tt>
+#
+# [*ldap_tls_reqcert*]
+#   If TLS server certificate should be validated
+#   Valid values: <tt>never</tt>, <tt>allow</tt>, <tt>try</tt>, <tt>demand</tt>, <tt>hard</tt>
+#
+# [*ldap_scope*]
+#   Specifies the search scope
+#   Valid values: <tt>sub</tt>, <tt>one</tt>, <tt>base</tt>
+#
 # [*parameters*]
 #   Hash variable to pass to nslcd
 #   Valid values: hash, ex:  <tt>{ 'option' => 'value' }</tt>
