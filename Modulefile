@@ -1,10 +1,10 @@
-name 'artisol-template'
+name 'artisol-nslcd'
 version '0.0.1'
 
-author 'Firstname Lastname'
+author 'Johan Lyheden'
 license ''
 project_page ''
 source ''
-summary ''
+summary 'Manages the nslcd daemon'
 description ''
 dependency 'puppetlabs/stdlib', '==3.2.0'
