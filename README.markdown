@@ -15,10 +15,11 @@ You can install nslcd with the default by including the class
 	inclue nslcd
 
 However, to be of any use its necessary to configure the LDAP service
-that should be queried.
+that should be queried. The following example configures authentication
+to Active Directory over LDAPS:
 
 	class { 'nslcd':
-		ldap_uri         => 'ldap://my.server.com',
+		ldap_uri         => 'ldaps://my.server.com',
 		ldap_base        => 'dc=server,dc=com',
 		ldap_binddn      => 'cn=reader,ou=users,dc=server,dc=com',
 		ldap_bindpw      => 's3cret',
@@ -26,7 +27,16 @@ that should be queried.
 		ldap_tls_reqcert => 'never',
 		ldap_scope       => 'sub',
 		parameters       => {
-			'custom_parameter' => 'value'
+			'filter passwd'             => '(&(objectClass=user)(!(objectClass=computer))(uidNumber=*)(unixHomeDirectory=*))',
+			'filter shadow'             => '(&(objectClass=user)(!(objectClass=computer))(uidNumber=*)(unixHomeDirectory=*))',
+			'filter group'              => '(objectClass=group)',
+			'map passwd uid'            => 'sAMAccountName',
+			'map passwd uidnumber'      => 'uidNumber',
+			'map passwd homedirectory'  => 'unixHomeDirectory',
+			'map passwd loginshell'     => 'loginShell',
+			'map passwd gecos'          => 'displayName',
+			'map shadow uid'            => 'sAMAccountName',
+			'map group uniqueMember'    => 'member'
 		}
 	}
 
