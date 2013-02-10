@@ -12,9 +12,9 @@ on a simple configuration file.
 
 You can install nslcd with the default by including the class
 
-	inclue nslcd
+	include nslcd
 
-However, to be of any use its necessary to configure the LDAP service
+However, to be of any use it's necessary to configure the LDAP service
 that should be queried. The following example configures authentication
 to Active Directory over LDAPS:
 
