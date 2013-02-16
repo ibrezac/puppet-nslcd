@@ -1,10 +1,9 @@
-name 'artisol-nslcd'
+name 'jlyheden-nslcd'
 version '0.0.1'
-
 author 'Johan Lyheden'
-license ''
+license 'Apache License 2.0'
 project_page 'https://bitbucket.org/jlyheden/puppet-nslcd'
 source 'git@bitbucket.org:jlyheden/puppet-nslcd.git'
 summary 'Manages the nslcd daemon'
-description ''
+description 'A Puppet module to manage the nslcd daemon which provides authentication via LDAP'
 dependency 'puppetlabs/stdlib', '>=3.2.0'
