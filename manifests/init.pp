@@ -92,10 +92,6 @@
 # To add support for other platforms, edit the params.pp file and provide
 # settings for that platform.
 #
-# === Author
-#
-# Johan Lyheden <johan.lyheden@artificial-solutions.com>
-#
 class nslcd (  $ensure = $nslcd::params::ensure,
                $service_enable = $nslcd::params::service_enable,
                $service_status = $nslcd::params::service_status,
