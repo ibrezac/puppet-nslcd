@@ -164,7 +164,7 @@ class nslcd (
   }
   $ldap_ssl_real = $ldap_ssl ? {
     'UNDEF' => $nslcd::params::ldap_ssl,
-    default => $ldap_sll
+    default => $ldap_ssl
   }
   $ldap_tls_reqcert_real = $ldap_tls_reqcert ? {
     'UNDEF' => $nslcd::params::ldap_tls_reqcert,
@@ -181,7 +181,7 @@ class nslcd (
   $valid_ldap_versions = [ '2', '3' ]
   validate_re($ensure_real, $valid_ensure_values)
   validate_re($service_status_real, $valid_service_statuses)
-  validate_re($ldap_version_real, $valid_ldap_version)
+  validate_re($ldap_version_real, $valid_ldap_versions)
   validate_bool($autoupgrade_real)
   validate_bool($autorestart_real)
   validate_bool($ldap_ssl_real)
@@ -249,17 +249,17 @@ class nslcd (
         mode    => '0755'
       }
     }
-    
+ 
     # If software should be uninstalled
     absent,purged: {
     }
-    
+ 
     # Catch all, should not end up here due to input validation
     default: {
       fail("Unsupported ensure value ${ensure_real}")
     }
   }
-  
+
   package { 'nslcd':
     ensure  => $ensure_package,
     name    => $nslcd::params::package
