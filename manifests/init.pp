@@ -127,7 +127,7 @@ class nslcd (
     default => $service_status
   }
   $autoupgrade_real = $autoupgrade ? {
-    'UNDEF' => $nslcd::params::autoupgrade
+    'UNDEF' => $nslcd::params::autoupgrade,
     default => $autoupgrade
   }
   $autorestart_real = $autorestart ? {
@@ -217,7 +217,7 @@ class nslcd (
     # If software should be installed
     present: {
       if $autorestart_real == true {
-        Service['nslcd/service'] { subscribe => File['nslcd/config'] }
+        Service['nslcd'] { subscribe => File['nslcd/config'] }
       }
       if $source_real == undef {
         File['nslcd/config'] { content => template($template_real) }
@@ -226,9 +226,9 @@ class nslcd (
       }
       File {
         require => Package['nslcd'],
-        before  => Service['nslcd/service']
+        before  => Service['nslcd']
       }
-      service { 'nslcd/service':
+      service { 'nslcd':
         ensure  => $ensure_service,
         name    => $nslcd::params::service,
         enable  => $service_enable_real,
