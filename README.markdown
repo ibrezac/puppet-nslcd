@@ -1,4 +1,5 @@
 # Module: nslcd
+[![Build Status](https://travis-ci.org/jlyheden/puppet-nslcd.png)](https://travis-ci.org/jlyheden/puppet-nslcd)
 
 This is the Puppet module for nslcd - local LDAP name service daemon.
 Nslcd is a daemon that will do LDAP queries for local processes based
