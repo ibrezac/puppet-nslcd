@@ -58,7 +58,8 @@
 #
 # [*ldap_tls_reqcert*]
 #   If TLS server certificate should be validated
-#   Valid values: <tt>never</tt>, <tt>allow</tt>, <tt>try</tt>, <tt>demand</tt>, <tt>hard</tt>
+#   Valid values: <tt>never</tt>, <tt>allow</tt>,
+#                 <tt>try</tt>, <tt>demand</tt>, <tt>hard</tt>
 #
 # [*ldap_scope*]
 #   Specifies the search scope
@@ -249,11 +250,11 @@ class nslcd (
         mode    => '0755'
       }
     }
- 
+
     # If software should be uninstalled
     absent,purged: {
     }
- 
+
     # Catch all, should not end up here due to input validation
     default: {
       fail("Unsupported ensure value ${ensure_real}")
