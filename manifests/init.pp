@@ -92,82 +92,146 @@
 # To add support for other platforms, edit the params.pp file and provide
 # settings for that platform.
 #
-class nslcd (  $ensure = $nslcd::params::ensure,
-               $service_enable = $nslcd::params::service_enable,
-               $service_status = $nslcd::params::service_status,
-               $autoupgrade = $nslcd::params::autoupgrade,
-               $autorestart = $nslcd::params::autorestart,
-               $source = $nslcd::params::source,
-               $template = $nslcd::params::template,
-               $ldap_uri = $nslcd::params::ldap_uri,
-               $ldap_base = $nslcd::params::ldap_base,
-               $ldap_version = $nslcd::params::ldap_version,
-               $ldap_binddn = $nslcd::params::ldap_binddn,
-               $ldap_bindpw = $nslcd::params::ldap_bindpw,
-               $ldap_ssl = $nslcd::params::ldap_ssl,
-               $ldap_tls_reqcert = $nslcd::params::ldap_tls_reqcert,
-               $ldap_scope = $nslcd::params::ldap_scope,
-               $parameters = {} ) inherits nslcd::params {
+class nslcd (
+  $ensure           = 'UNDEF',
+  $service_enable   = 'UNDEF',
+  $service_status   = 'UNDEF',
+  $autoupgrade      = 'UNDEF',
+  $autorestart      = 'UNDEF',
+  $source           = 'UNDEF',
+  $template         = 'UNDEF',
+  $ldap_uri         = 'UNDEF',
+  $ldap_base        = 'UNDEF',
+  $ldap_version     = 'UNDEF',
+  $ldap_binddn      = 'UNDEF',
+  $ldap_bindpw      = 'UNDEF',
+  $ldap_ssl         = 'UNDEF',
+  $ldap_tls_reqcert = 'UNDEF',
+  $ldap_scope       = 'UNDEF',
+  $parameters       = {}
+) {
+
+  include nslcd::params
+
+  # puppet 2.6 compatibility
+  $ensure_real = $ensure ? {
+    'UNDEF' => $nslcd::params::ensure,
+    default => $ensure
+  }
+  $service_enable_real = $service_enable ? {
+    'UNDEF' => $nslcd::params::service_enable,
+    default => $service_enable
+  }
+  $service_status_real = $service_status ? {
+    'UNDEF' => $nslcd::params::service_status,
+    default => $service_status
+  }
+  $autoupgrade_real = $autoupgrade ? {
+    'UNDEF' => $nslcd::params::autoupgrade
+    default => $autoupgrade
+  }
+  $autorestart_real = $autorestart ? {
+    'UNDEF' => $nslcd::params::autorestart,
+    default => $autorestart
+  }
+  $source_real = $source ? {
+    'UNDEF' => $nslcd::params::source,
+    default => $source
+  }
+  $template_real = $template ? {
+    'UNDEF' => $nslcd::params::template,
+    default => $template
+  }
+  $ldap_uri_real = $ldap_uri ? {
+    'UNDEF' => $nslcd::params::ldap_uri,
+    default => $ldap_uri
+  }
+  $ldap_base_real = $ldap_base ? {
+    'UNDEF' => $nslcd::params::ldap_base,
+    default => $ldap_base
+  }
+  $ldap_version_real = $ldap_version ? {
+    'UNDEF' => $nslcd::params::ldap_version,
+    default => $ldap_version
+  }
+  $ldap_binddn_real = $ldap_binddn ? {
+    'UNDEF' => $nslcd::params::ldap_binddn,
+    default => $ldap_binddn
+  }
+  $ldap_bindpw_real = $ldap_bindpw ? {
+    'UNDEF' => $nslcd::params::ldap_bindpw,
+    default => $ldap_bindpw
+  }
+  $ldap_ssl_real = $ldap_ssl ? {
+    'UNDEF' => $nslcd::params::ldap_ssl,
+    default => $ldap_sll
+  }
+  $ldap_tls_reqcert_real = $ldap_tls_reqcert ? {
+    'UNDEF' => $nslcd::params::ldap_tls_reqcert,
+    default => $ldap_tls_reqcert
+  }
+  $ldap_scope_real = $ldap_scope ? {
+    'UNDEF' => $nslcd::params::ldap_scope,
+    default => $ldap_scope
+  }
 
   # Input validation
-  validate_re($ensure,[ 'present', 'absent', 'purge' ])
-  validate_re($service_status, [ 'running', 'stopped', 'unmanaged' ])
-  validate_re($ldap_version, [ '2', '3' ])
-  validate_bool($autoupgrade)
-  validate_bool($autorestart)
-  validate_bool($ldap_ssl)
+  $valid_ensure_values = [ 'present', 'absent', 'purged' ]
+  $valid_service_statuses = [ 'running', 'stopped', 'unmanaged' ]
+  $valid_ldap_versions = [ '2', '3' ]
+  validate_re($ensure_real, $valid_ensure_values)
+  validate_re($service_status_real, $valid_service_statuses)
+  validate_re($ldap_version_real, $valid_ldap_version)
+  validate_bool($autoupgrade_real)
+  validate_bool($autorestart_real)
+  validate_bool($ldap_ssl_real)
   validate_hash($parameters)
 
   # Insert class parameters into hash
   # This simplifies the erb template and makes
   # it less verbose
-  $parameters['uri'] = $ldap_uri
-  $parameters['base'] = $ldap_base
-  $parameters['ldap_version'] = $ldap_version
-  $parameters['binddn'] = $ldap_binddn
-  $parameters['bindpw'] = $ldap_bindpw
-  $parameters['ssl'] = $ldap_ssl
-  $parameters['tls_reqcert'] = $ldap_tls_reqcert
-  $parameters['scope'] = $ldap_scope
+  $parameters['uri'] = $ldap_uri_real
+  $parameters['base'] = $ldap_base_real
+  $parameters['ldap_version'] = $ldap_version_real
+  $parameters['binddn'] = $ldap_binddn_real
+  $parameters['bindpw'] = $ldap_bindpw_real
+  $parameters['ssl'] = $ldap_ssl_real
+  $parameters['tls_reqcert'] = $ldap_tls_reqcert_real
+  $parameters['scope'] = $ldap_scope_real
 
   # 'unmanaged' is an unknown service state
-  $service_status_real = $service_status ? {
+  $ensure_service = $service_status_real ? {
     'unmanaged' => undef,
-    default     => $service_status
+    default     => $service_status_real
   }
 
   # Manages automatic upgrade behavior
-  if $ensure == 'present' and $autoupgrade == true {
+  if $ensure_real == 'present' and $autoupgrade_real == true {
     $ensure_package = 'latest'
   } else {
-    $ensure_package = $ensure
+    $ensure_package = $ensure_real
   }
 
-  case $ensure {
+  case $ensure_real {
 
     # If software should be installed
     present: {
-      if $autoupgrade == true {
-        Package['nslcd'] { ensure => latest }
-      } else {
-        Package['nslcd'] { ensure => present }
-      }
-      if $autorestart == true {
+      if $autorestart_real == true {
         Service['nslcd/service'] { subscribe => File['nslcd/config'] }
       }
-      if $source == undef {
-        File['nslcd/config'] { content => template($template) }
+      if $source_real == undef {
+        File['nslcd/config'] { content => template($template_real) }
       } else {
-        File['nslcd/config'] { source => $source }
+        File['nslcd/config'] { source => $source_real }
       }
       File {
         require => Package['nslcd'],
         before  => Service['nslcd/service']
       }
       service { 'nslcd/service':
-        ensure  => $service_status_real,
+        ensure  => $ensure_service,
         name    => $nslcd::params::service,
-        enable  => $service_enable,
+        enable  => $service_enable_real,
         require => [ Package['nslcd'], File['nslcd/config' ] ]
       }
       file { 'nslcd/config':
@@ -187,17 +251,17 @@ class nslcd (  $ensure = $nslcd::params::ensure,
     }
     
     # If software should be uninstalled
-    absent,purge: {
-      Package['nslcd'] { ensure => $ensure }
+    absent,purged: {
     }
     
     # Catch all, should not end up here due to input validation
     default: {
-      fail("Unsupported ensure value ${ensure}")
+      fail("Unsupported ensure value ${ensure_real}")
     }
   }
   
   package { 'nslcd':
+    ensure  => $ensure_package,
     name    => $nslcd::params::package
   }
 

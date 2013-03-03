@@ -25,9 +25,9 @@ class nslcd::params {
 
   # This mandates which distributions are supported
   # To add support for other distributions simply add
-  # a matching regex line to the lsbdistcodename fact
-  case $::lsbdistcodename {
-    lucid: {
+  # it here
+  case $::operatingsystem {
+    'Ubuntu','Debian': {
       $user = 'nslcd'
       $group = 'nslcd'
       $package = 'nslcd'
@@ -37,7 +37,7 @@ class nslcd::params {
       $run_dir = '/var/run/nslcd'
     }
     default: {
-      fail("Unsupported distribution ${::lsbdistcodename}")
+      fail("Unsupported operatingsystem ${::operatingsystem}")
     }
   }
 
