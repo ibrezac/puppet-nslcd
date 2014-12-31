@@ -162,6 +162,8 @@ class nslcd (
   }
   $ldap_ssl_real = $ldap_ssl ? {
     'UNDEF' => $nslcd::params::ldap_ssl,
+    true    => 'on',
+    false   => 'off',
     default => $ldap_ssl
   }
   $ldap_tls_reqcert_real = $ldap_tls_reqcert ? {
@@ -177,12 +179,13 @@ class nslcd (
   $valid_ensure_values = [ 'present', 'absent', 'purged' ]
   $valid_service_statuses = [ 'running', 'stopped', 'unmanaged' ]
   $valid_ldap_versions = [ '2', '3' ]
+  $valid_ldap_ssl_options = [ 'on', 'off', 'start_tls' ]
   validate_re($ensure_real, $valid_ensure_values)
   validate_re($service_status_real, $valid_service_statuses)
   validate_re($ldap_version_real, $valid_ldap_versions)
   validate_bool($autoupgrade_real)
   validate_bool($autorestart_real)
-  validate_bool($ldap_ssl_real)
+  validate_re($ldap_ssl_real, $valid_ldap_ssl_options)
   validate_hash($parameters)
 
   # Insert class parameters into hash
