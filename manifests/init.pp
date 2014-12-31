@@ -65,6 +65,14 @@
 #   Specifies the search scope
 #   Valid values: <tt>sub</tt>, <tt>one</tt>, <tt>base</tt>
 #
+# [*user*]
+#   Specifies the nslcd daemon process owner
+#   Valid values: <tt>nslcd</tt>
+#
+# [*group*]
+#   Specifies the nslcd daemon process group
+#   Valid values: <tt>nslcd</tt>
+#
 # [*parameters*]
 #   Hash variable to pass to nslcd
 #   Valid values: hash, ex:  <tt>{ 'option' => 'value' }</tt>
@@ -106,6 +114,8 @@ class nslcd (
   $ldap_ssl         = 'UNDEF',
   $ldap_tls_reqcert = 'UNDEF',
   $ldap_scope       = 'UNDEF',
+  $user             = 'UNDEF',
+  $group            = 'UNDEF',
   $parameters       = {}
 ) {
 
@@ -172,6 +182,14 @@ class nslcd (
     'UNDEF' => $nslcd::params::ldap_scope,
     default => $ldap_scope
   }
+  $user_real = $user ? {
+    'UNDEF' => $nslcd::params::user,
+    default => $user
+  }
+  $group_real = $group ? {
+    'UNDEF' => $nslcd::params::group,
+    default => $group
+  }
 
   # Input validation
   $valid_ensure_values = [ 'present', 'absent', 'purged' ]
@@ -235,14 +253,14 @@ class nslcd (
       file { 'nslcd/config':
         ensure  => present,
         owner   => root,
-        group   => $nslcd::params::group,
+        group   => $group_real,
         mode    => $nslcd::params::config_file_mode,
         path    => $nslcd::params::config_file,
       }
       file { 'nslcd/rundir':
         ensure  => directory,
-        owner   => $nslcd::params::user,
-        group   => $nslcd::params::group,
+        owner   => $user_real,
+        group   => $group_real,
         path    => $nslcd::params::run_dir,
         mode    => '0755'
       }

@@ -5,8 +5,8 @@
 # Defaults
 # These are mandated via init script so makes no
 # sense to change them
-uid <%= scope.lookupvar('nslcd::params::user') %>
-gid <%= scope.lookupvar('nslcd::params::group') %>
+uid <%= scope.lookupvar('user_real') %>
+gid <%= scope.lookupvar('group_real') %>
 
 # Configurable parameters
 <%- parameters.sort_by { |k,v| k }.each do |k,v|
