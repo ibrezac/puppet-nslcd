@@ -65,6 +65,14 @@
 #   Specifies the search scope
 #   Valid values: <tt>sub</tt>, <tt>one</tt>, <tt>base</tt>
 #
+# [*user*]
+#   Specifies the nslcd daemon process owner
+#   Valid values: <tt>nslcd</tt>
+#
+# [*group*]
+#   Specifies the nslcd daemon process group
+#   Valid values: <tt>nslcd</tt>
+#
 # [*parameters*]
 #   Hash variable to pass to nslcd
 #   Valid values: hash, ex:  <tt>{ 'option' => 'value' }</tt>
@@ -106,6 +114,8 @@ class nslcd (
   $ldap_ssl         = 'UNDEF',
   $ldap_tls_reqcert = 'UNDEF',
   $ldap_scope       = 'UNDEF',
+  $user             = 'UNDEF',
+  $group            = 'UNDEF',
   $parameters       = {}
 ) {
 
@@ -174,6 +184,14 @@ class nslcd (
     'UNDEF' => $nslcd::params::ldap_scope,
     default => $ldap_scope
   }
+  $user_real = $user ? {
+    'UNDEF' => $nslcd::params::user,
+    default => $user
+  }
+  $group_real = $group ? {
+    'UNDEF' => $nslcd::params::group,
+    default => $group
+  }
 
   # Input validation
   $valid_ensure_values = [ 'present', 'absent', 'purged' ]
@@ -191,14 +209,16 @@ class nslcd (
   # Insert class parameters into hash
   # This simplifies the erb template and makes
   # it less verbose
-  $parameters['uri'] = $ldap_uri_real
-  $parameters['base'] = $ldap_base_real
-  $parameters['ldap_version'] = $ldap_version_real
-  $parameters['binddn'] = $ldap_binddn_real
-  $parameters['bindpw'] = $ldap_bindpw_real
-  $parameters['ssl'] = $ldap_ssl_real
-  $parameters['tls_reqcert'] = $ldap_tls_reqcert_real
-  $parameters['scope'] = $ldap_scope_real
+  $parameters_real = merge($parameters, {
+    uri => $ldap_uri_real,
+    base => $ldap_base_real,
+    ldap_version => $ldap_version_real,
+    binddn => $ldap_binddn_real,
+    bindpw => $ldap_bindpw_real,
+    ssl => $ldap_ssl_real,
+    tls_reqcert => $ldap_tls_reqcert_real,
+    scope => $ldap_scope_real,
+  })
 
   # 'unmanaged' is an unknown service state
   $ensure_service = $service_status_real ? {
@@ -238,14 +258,14 @@ class nslcd (
       file { 'nslcd/config':
         ensure  => present,
         owner   => root,
-        group   => $nslcd::params::group,
+        group   => $group_real,
         mode    => $nslcd::params::config_file_mode,
         path    => $nslcd::params::config_file,
       }
       file { 'nslcd/rundir':
         ensure  => directory,
-        owner   => $nslcd::params::user,
-        group   => $nslcd::params::group,
+        owner   => $user_real,
+        group   => $group_real,
         path    => $nslcd::params::run_dir,
         mode    => '0755'
       }
